@@ -1,11 +1,7 @@
 const { src, dest, task, series } = require("gulp");
 const rm = require("gulp-rm");
 const sass = require('gulp-sass');
-
-const files = [
-    'src/**/*.scss',
-    'src/**/*.css',
-]
+const concat = require('gulp-concat');
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -20,8 +16,15 @@ task('copy', () => {
                                                        src в папку dist*/
 });
 
+const styles = [
+    'node_modules/normalize.css/normalize.css',
+    'src/styles/main.scss',
+    'src/styles/main.css'
+]
+
 task('styles', () => {
-    return src('src/styles/main.scss')
+    return src(styles)
+        .pipe(concat('main.scss'))
         .pipe(sass().on('error', sass.logError))
         .pipe(dest('dist'));
     /* сначало установить npm install node-sass gulp-sass --save-dev*/
