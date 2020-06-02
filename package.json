@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "gulp": "^4.0.2"
+    },
     "scripts": {
         "gulp": "gulp"
     },
@@ -16,8 +20,5 @@
     "bugs": {
         "url": "https://github.com/cashaxod123/GULP-template/issues"
     },
-    "homepage": "https://github.com/cashaxod123/GULP-template#readme",
-    "devDependencies": {
-        "gulp": "^4.0.2"
-    }
+    "homepage": "https://github.com/cashaxod123/GULP-template#readme"
 }
