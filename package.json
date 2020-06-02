@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/cashaxod123/GULP-template/issues"
   },
-  "homepage": "https://github.com/cashaxod123/GULP-template#readme"
+  "homepage": "https://github.com/cashaxod123/GULP-template#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
 }
