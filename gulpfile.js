@@ -3,7 +3,8 @@ const rm = require("gulp-rm");
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
-const reload = browserSync.reload
+const reload = browserSync.reload;
+const sassGlob = require('gulp-sass-glob');
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -38,6 +39,7 @@ const styles = [
 task('styles', () => {
     return src(styles)
         .pipe(concat('main.scss'))
+        .pipe(sassGlob()) //Продвинутый импорт стилей
         .pipe(sass().on('error', sass.logError))
         .pipe(dest('dist'));
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
