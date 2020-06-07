@@ -5,6 +5,7 @@
     "main": "index.js",
     "dependencies": {
         "gulp-sourcemaps": "^2.6.5",
+        "jquery": "^3.5.1",
         "normalize.css": "^8.0.1"
     },
     "devDependencies": {
@@ -21,6 +22,8 @@
         "gulp-sass": "^4.1.0",
         "gulp-sass-glob": "^1.1.0",
         "gulp-smile-px2rem": "^0.1.0",
+        "gulp-svg-sprite": "^1.5.0",
+        "gulp-svgo": "^2.2.1",
         "gulp-uglify": "^3.0.2",
         "node-sass": "^4.14.1"
     },

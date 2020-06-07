@@ -12,6 +12,8 @@ const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
+const svgo = require('gulp-svgo');
+const svgSprite = require('gulp-svg-sprite');
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -26,15 +28,6 @@ task('copy:html', () => {
         .pipe(reload({ stream: true }));
     /* копируем файлы с расширением .html, и .scss из папки 
                                                    src в папку dist*/
-});
-
-task('server', () => {
-    browserSync.init({
-        server: {
-            baseDir: "./dist"
-        },
-        open: false
-    });
 });
 
 const styles = [
@@ -82,9 +75,33 @@ task('scripts', () => {
         .pipe(reload({ stream: true }));
 });
 
+task('icons', () => {
+    return src('src/images/icons/*.svg')
+        .pipe(
+            svgo({
+                plugins: [{
+                    removeAttrs: {
+                        attrs: '(fill|stroke|style|width|height|data.*)'
+                    }
+                }]
+            })
+        )
+        .pipe(dest('dist/images/icons'));
+})
+
+task('server', () => {
+    browserSync.init({
+        server: {
+            baseDir: "./dist"
+        },
+        open: false
+    });
+});
+
+
 watch('./src/styles/**/*.css', series('styles'));
 watch('./src/styles/**/*.scss', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
 watch('./src/*.html', series('copy:html'));
 watch('./src/scripts/*.js', series('scripts'));
 
-task("default", series("clean", "copy:html", "styles", 'scripts', 'server'));
+task("default", series("clean", "copy:html", "styles", 'scripts', 'icons', 'server'));
