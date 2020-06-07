@@ -9,7 +9,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const px2rem = require('gulp-smile-px2rem');
 const gcmq = require('gulp-group-css-media-queries');
 const cleanCSS = require('gulp-clean-css');
-
+const sourcemaps = require('gulp-sourcemaps');
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -43,6 +43,7 @@ const styles = [
 
 task('styles', () => {
     return src(styles)
+        .pipe(sourcemaps.init())
         .pipe(concat('main.scss'))
         .pipe(sassGlob()) //Продвинутый импорт стилей
         .pipe(sass().on('error', sass.logError))
@@ -52,8 +53,9 @@ task('styles', () => {
                 overrideBrowserslist: ['last 2 versions'],
                 cascade: true
             }))
-        .pipe(gcmq())
+        .pipe(gcmq()) //не нужен при разработке
         .pipe(cleanCSS())
+        .pipe(sourcemaps.write())
         .pipe(dest('dist'));
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
 });

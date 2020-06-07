@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "dependencies": {
+        "gulp-sourcemaps": "^2.6.5",
         "normalize.css": "^8.0.1"
     },
     "devDependencies": {
