@@ -10,6 +10,7 @@ const px2rem = require('gulp-smile-px2rem');
 const gcmq = require('gulp-group-css-media-queries');
 const cleanCSS = require('gulp-clean-css');
 const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -64,6 +65,9 @@ task('scripts', () => {
     return src('src/scripts/*.js')
         .pipe(sourcemaps.init())
         .pipe(concat('main.js', { newLine: ';\n\n' }))
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(sourcemaps.write())
         .pipe(dest('dist'))
 });
