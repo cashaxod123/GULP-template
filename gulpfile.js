@@ -60,8 +60,16 @@ task('styles', () => {
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
 });
 
+task('scripts', () => {
+    return src('src/scripts/*.js')
+        .pipe(sourcemaps.init())
+        .pipe(concat('main.js', { newLine: ';\n\n' }))
+        .pipe(sourcemaps.write())
+        .pipe(dest('dist'))
+});
+
 watch('./src/styles/**/*.css', series('styles'));
 watch('./src/styles/**/*.scss', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
 watch('./src/*.html', series('copy:html'));
 
-task("default", series("clean", "copy:html", "styles", 'server'));
+task("default", series("clean", "copy:html", "styles", 'scripts', 'server'));
