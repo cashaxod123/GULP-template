@@ -7,6 +7,7 @@ const reload = browserSync.reload;
 const sassGlob = require('gulp-sass-glob');
 const autoprefixer = require('gulp-autoprefixer');
 const px2rem = require('gulp-smile-px2rem');
+const gcmq = require('gulp-group-css-media-queries');
 
 
 sass.compiler = require('node-sass'); //sass компилятор node
@@ -50,6 +51,7 @@ task('styles', () => {
                 overrideBrowserslist: ['last 2 versions'],
                 cascade: true
             }))
+        .pipe(gcmq())
         .pipe(dest('dist'));
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
 });
