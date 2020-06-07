@@ -21,6 +21,7 @@
         "gulp-sass": "^4.1.0",
         "gulp-sass-glob": "^1.1.0",
         "gulp-smile-px2rem": "^0.1.0",
+        "gulp-uglify": "^3.0.2",
         "node-sass": "^4.14.1"
     },
     "scripts": {
