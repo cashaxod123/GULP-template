@@ -1,4 +1,4 @@
-const { src, dest, task, series, watch } = require("gulp");
+const { src, dest, task, series, watch, parallel } = require("gulp");
 const rm = require("gulp-rm");
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
@@ -14,6 +14,9 @@ const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const svgo = require('gulp-svgo');
 const svgSprite = require('gulp-svg-sprite');
+const gulpif = require('gulp-if');
+
+const env = process.env.NODE_ENV;
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -38,19 +41,19 @@ const styles = [
 
 task('styles', () => {
     return src(styles)
-        .pipe(sourcemaps.init())
+        .pipe(gulpif(env === 'dev', sourcemaps.init()))
         .pipe(concat('main.min.scss'))
         .pipe(sassGlob()) //Продвинутый импорт стилей
         .pipe(sass().on('error', sass.logError))
         .pipe(px2rem())
-        .pipe(
+        .pipe(gulpif(env === 'dev',
             autoprefixer({
                 overrideBrowserslist: ['last 2 versions'],
                 cascade: true
-            }))
-        .pipe(gcmq()) //не нужен при разработке
-        .pipe(cleanCSS())
-        .pipe(sourcemaps.write())
+            })))
+        .pipe(gulpif(env === 'prod', gcmq())) //не нужен при разработке
+        .pipe(gulpif(env === 'prod', cleanCSS())) //не нужен при разработке
+        .pipe(gulpif(env === 'dev', sourcemaps.write()))
         .pipe(dest('dist'))
         .pipe(reload({ stream: true }));
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
@@ -64,13 +67,13 @@ const libs = [
 
 task('scripts', () => {
     return src(libs)
-        .pipe(sourcemaps.init())
+        .pipe(gulpif(env === 'dev', sourcemaps.init()))
         .pipe(concat('main.min.js', { newLine: ';\n\n' }))
         .pipe(babel({
             presets: ['@babel/env']
         }))
-        .pipe(uglify())
-        .pipe(sourcemaps.write())
+        .pipe(gulpif(env === 'prod', uglify()))
+        .pipe(gulpif(env === 'dev', sourcemaps.write()))
         .pipe(dest('dist'))
         .pipe(reload({ stream: true }));
 });
@@ -98,10 +101,35 @@ task('server', () => {
     });
 });
 
+task('watch', () => {
+    watch('./src/styles/**/*.css', series('styles'));
+    watch('./src/styles/**/*.scss', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
+    watch('./src/*.html', series('copy:html'));
+    watch('./src/scripts/*.js', series('scripts'));
+    watch('./src/images/icons/*.svg', series('icons'));
+});
 
-watch('./src/styles/**/*.css', series('styles'));
-watch('./src/styles/**/*.scss', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
-watch('./src/*.html', series('copy:html'));
-watch('./src/scripts/*.js', series('scripts'));
 
-task("default", series("clean", "copy:html", "styles", 'scripts', 'icons', 'server'));
+
+task(
+    "default",
+    series(
+        "clean",
+        parallel("copy:html", "styles", 'scripts', 'icons'),
+        parallel('watch', 'server')
+    )
+);
+
+task(
+    "build",
+    series(
+        "clean",
+        parallel("copy:html", "styles", 'scripts', 'icons')
+    )
+);
+
+
+
+// npm run gulp --- запуск галпа для разработки
+
+// npm run build --- после окончания разработки

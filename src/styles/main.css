@@ -4,7 +4,6 @@ html {
 
 h1 {
     display: flex;
-    transform: translate(-50%, -50%);
     color: green;
     width: 100px;
     border-width: 1px;
