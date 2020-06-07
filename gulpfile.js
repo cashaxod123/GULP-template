@@ -5,6 +5,8 @@ const concat = require('gulp-concat');
 const browserSync = require('browser-sync').create();
 const reload = browserSync.reload;
 const sassGlob = require('gulp-sass-glob');
+const autoprefixer = require('gulp-autoprefixer');
+
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -41,11 +43,17 @@ task('styles', () => {
         .pipe(concat('main.scss'))
         .pipe(sassGlob()) //Продвинутый импорт стилей
         .pipe(sass().on('error', sass.logError))
+        .pipe(
+            autoprefixer({
+                overrideBrowserslist: ['last 2 versions'],
+                cascade: true
+            }))
         .pipe(dest('dist'));
     /* сначала установить npm install node-sass gulp-sass --save-dev*/
 });
 
-watch('./src/styles/**/*.css', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
+watch('./src/styles/**/*.css', series('styles'));
+watch('./src/styles/**/*.scss', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
 watch('./src/*.html', series('copy:html'));
 
 task("default", series("clean", "copy:html", "styles", 'server'));
