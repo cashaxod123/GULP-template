@@ -1,7 +1,9 @@
-const { src, dest, task, series } = require("gulp");
+const { src, dest, task, series, watch } = require("gulp");
 const rm = require("gulp-rm");
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
+const browserSync = require('browser-sync').create();
+const reload = browserSync.reload
 
 sass.compiler = require('node-sass'); //sass компилятор node
 
@@ -10,10 +12,21 @@ task('clean', () => {
         .pipe(rm()) // удаление всех файлов из папки dist
 });
 
-task('copy', () => {
-    return src(files).pipe(dest('dist'))
-        /* копируем файлы с расширением .css, и .scss из папки 
-                                                       src в папку dist*/
+task('copy:html', () => {
+    return src('src/*.html')
+        .pipe(dest('dist'))
+        .pipe(reload({ stream: true }));
+    /* копируем файлы с расширением .html, и .scss из папки 
+                                                   src в папку dist*/
+});
+
+task('server', () => {
+    browserSync.init({
+        server: {
+            baseDir: "./dist"
+        },
+        open: false
+    });
 });
 
 const styles = [
@@ -27,7 +40,10 @@ task('styles', () => {
         .pipe(concat('main.scss'))
         .pipe(sass().on('error', sass.logError))
         .pipe(dest('dist'));
-    /* сначало установить npm install node-sass gulp-sass --save-dev*/
+    /* сначала установить npm install node-sass gulp-sass --save-dev*/
 });
 
-task("default", series("clean", "styles"));
+watch('./src/styles/**/*.css', series('styles')); //слежка за изменениями в файлах и выполнение таска styles
+watch('./src/*.html', series('copy:html'));
+
+task("default", series("clean", "copy:html", "styles", 'server'));
